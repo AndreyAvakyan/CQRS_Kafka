@@ -42,6 +42,4 @@ public abstract class AggregateRoot {
 			this.ApplyChange(_event, false);
 		}
 	}
-
-	//comment
 }

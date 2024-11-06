@@ -2,7 +2,7 @@
 
 namespace Post_Cmd.Api.Commands;
 
-public class RemoveCommentCommand: BaseCommand{
-	public Guid CommentID{ get; set; }
+public class RemoveCommentCommand: BaseCommand {
+	public Guid CommentId { get; set; }
 	public string Username { get; set; }
 }

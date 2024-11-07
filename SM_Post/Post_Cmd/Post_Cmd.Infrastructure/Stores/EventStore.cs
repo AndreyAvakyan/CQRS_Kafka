@@ -2,18 +2,21 @@
 using CQRS_Core.Events;
 using CQRS_Core.Exceptions;
 using CQRS_Core.Infrastructure;
+using CQRS_Core.Producers;
 using Post_Cmd.Domain.Aggregates;
 
 namespace Post_Cmd.Infrastructure.Stores;
 
 public class EventStore: IEventStore {
+	private readonly IEventProducer _eventProducer;
 	private readonly IEventStoreRepository _eventStoreRepository;
 
-
-	public EventStore(IEventStoreRepository eventStoreRepository) {
+	public EventStore(IEventStoreRepository eventStoreRepository, IEventProducer eventProducer) {
 		this._eventStoreRepository = eventStoreRepository;
+		this._eventProducer = eventProducer;
 	}
 
+	//ADVISE: operations with MongoDb should be transactional (especially if we have a bunch of mongoDb replicas)
 	public async Task SaveEventsAsync(Guid aggregateId, IEnumerable<BaseEvent> events, int expectedVersion) {
 		var eventStream = await this._eventStoreRepository.FindByAggregateIdAsync(aggregateId);
 		if (expectedVersion != -1 && eventStream[^1].Version != expectedVersion){
@@ -35,6 +38,10 @@ public class EventStore: IEventStore {
 			};
 
 			await this._eventStoreRepository.SaveAsync(eventModel);
+
+			//now save to kafka
+			var topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC");
+			await this._eventProducer.ProduceAsync(topic, @event);
 		}
 	}
 

@@ -1,11 +1,14 @@
+using Confluent.Kafka;
 using CQRS_Core.Domain;
 using CQRS_Core.Handlers;
 using CQRS_Core.Infrastructure;
+using CQRS_Core.Producers;
 using Post_Cmd.Api.Commands;
 using Post_Cmd.Domain.Aggregates;
 using Post_Cmd.Infrastructure.Config;
 using Post_Cmd.Infrastructure.Dispatchers;
 using Post_Cmd.Infrastructure.Handlers;
+using Post_Cmd.Infrastructure.Producers;
 using Post_Cmd.Infrastructure.Repositories;
 using Post_Cmd.Infrastructure.Stores;
 
@@ -13,7 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
+builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 builder.Services.AddScoped<IEventStoreRepository, EventStoreRepository>();
+builder.Services.AddScoped<IEventProducer, EventProducer>();
 builder.Services.AddScoped<IEventStore, EventStore>();
 builder.Services.AddScoped<IEventSourcingHandler<PostAggregate>, EventSourcingHandler>();
 builder.Services.AddScoped<ICommandHandler, CommandHandler>();

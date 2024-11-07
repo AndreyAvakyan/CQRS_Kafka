@@ -2,4 +2,4 @@
 
 namespace CQRS_Core.Commands;
 
-public abstract class BaseCommand : Message{ }
+public abstract class BaseCommand: Message { }

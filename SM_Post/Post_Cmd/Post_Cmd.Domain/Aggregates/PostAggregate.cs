@@ -77,14 +77,14 @@ public class PostAggregate: AggregateRoot {
 			Id = this._id,
 			CommentId = Guid.NewGuid(),
 			Comment = comment,
-			UserName = username,
+			Username = username,
 			CommentDate = DateTime.UtcNow
 		});
 	}
 
 	public void Apply(CommentAddedEvent @event) {
 		this._id = @event.Id;
-		this._comments.Add(@event.CommentId, new Tuple<string, string>(@event.Comment, @event.UserName));
+		this._comments.Add(@event.CommentId, new Tuple<string, string>(@event.Comment, @event.Username));
 	}
 
 	public void EditComment(Guid commentId, string comment, string username) {
@@ -100,14 +100,14 @@ public class PostAggregate: AggregateRoot {
 			Id = this._id,
 			CommentId = commentId,
 			Comment = comment,
-			UserName = username,
+			Username = username,
 			EditDate = DateTime.UtcNow
 		});
 	}
 
 	public void Apply(CommentUpdatedEvent @event) {
 		this._id = @event.Id;
-		this._comments[@event.CommentId] = new Tuple<string, string>(@event.Comment, @event.UserName);
+		this._comments[@event.CommentId] = new Tuple<string, string>(@event.Comment, @event.Username);
 	}
 
 	public void RemoveComment(Guid commentId, string username) {
